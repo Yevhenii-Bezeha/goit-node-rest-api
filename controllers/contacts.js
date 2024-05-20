@@ -1,19 +1,15 @@
-// const contactsFunctions = require("../models/contacts");
-
 const { httpError } = require("../helpers");
 const { ctrlWrapper } = require("../decorators");
 const Contact = require("../models/contact");
 
 const listContacts = async (req, res, next) => {
   const data = await Contact.find();
-  // if not needed - find({}, '-name -email etc')
   res.json(data);
 };
 
 const getContactById = async (req, res, next) => {
   const { id } = req.params;
   const contact = await Contact.findById(id);
-  // if search by title - await Contact.findOne({title: title})
   if (!contact) {
     throw httpError(404, `Contact with ID ${id} not found`);
   }
@@ -33,7 +29,6 @@ const removeContact = async (req, res, next) => {
     throw httpError(404, `Book with ID ${id} not found`);
   }
   res.json(deletedContact);
-  // res.status(204).send();
 };
 
 const updateContact = async (req, res, next) => {
