@@ -6,9 +6,7 @@ mongoose
   .connect(envsConfig.dbHost)
   .then(() => {
     app.listen(envsConfig.port, () => {
-      console.log(
-        `Database connection successful. Server running. Use our API on port: ${envsConfig.port}`
-      );
+      console.log(`Server running. Use our API on port: ${envsConfig.port}`);
     });
   })
   .catch((e) => {

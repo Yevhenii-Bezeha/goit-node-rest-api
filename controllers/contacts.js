@@ -1,3 +1,5 @@
+// const contactsFunctions = require("../models/contacts");
+
 const { httpError } = require("../helpers");
 const { ctrlWrapper } = require("../decorators");
 const Contact = require("../models/contact");
@@ -18,7 +20,10 @@ const getContactById = async (req, res, next) => {
 
 const addContact = async (req, res, next) => {
   const body = req.body;
-  const createdContact = await Contact.create(body);
+
+  const { id } = req.user;
+
+  const createdContact = await Contact.create({ ...body, owner: id });
   res.status(201).json(createdContact);
 };
 
@@ -26,7 +31,7 @@ const removeContact = async (req, res, next) => {
   const { id } = req.params;
   const deletedContact = await Contact.findByIdAndDelete(id);
   if (!deletedContact) {
-    throw httpError(404, `Book with ID ${id} not found`);
+    throw httpError(404, `Contact with ID ${id} not found`);
   }
   res.json(deletedContact);
 };
@@ -38,7 +43,7 @@ const updateContact = async (req, res, next) => {
     new: true,
   });
   if (!updatedContact) {
-    throw httpError(404, `Book with ID ${id} not found`);
+    throw httpError(404, `Contact with ID ${id} not found`);
   }
   res.json(updatedContact);
 };
@@ -50,7 +55,7 @@ const updateFavorite = async (req, res, next) => {
     new: true,
   });
   if (!updatedContact) {
-    throw httpError(404, `Book with ID ${id} not found`);
+    throw httpError(404, `Contact with ID ${id} not found`);
   }
   res.json(updatedContact);
 };
