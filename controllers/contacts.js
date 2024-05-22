@@ -26,7 +26,7 @@ const removeContact = async (req, res, next) => {
   const { id } = req.params;
   const deletedContact = await Contact.findByIdAndDelete(id);
   if (!deletedContact) {
-    throw httpError(404, `Book with ID ${id} not found`);
+    throw httpError(404, `Contact with ID ${id} not found`);
   }
   res.json(deletedContact);
 };
@@ -34,11 +34,18 @@ const removeContact = async (req, res, next) => {
 const updateContact = async (req, res, next) => {
   const { id } = req.params;
   const body = req.body;
+
+  if (Object.keys(body).length === 0) {
+    return res
+      .status(400)
+      .json({ message: "Body must have at least one field" });
+  }
+
   const updatedContact = await Contact.findByIdAndUpdate(id, body, {
     new: true,
   });
   if (!updatedContact) {
-    throw httpError(404, `Book with ID ${id} not found`);
+    throw httpError(404, `Contact with ID ${id} not found`);
   }
   res.json(updatedContact);
 };
@@ -50,7 +57,7 @@ const updateFavorite = async (req, res, next) => {
     new: true,
   });
   if (!updatedContact) {
-    throw httpError(404, `Book with ID ${id} not found`);
+    throw httpError(404, `Contact with ID ${id} not found`);
   }
   res.json(updatedContact);
 };
