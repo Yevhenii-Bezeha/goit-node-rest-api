@@ -39,6 +39,13 @@ const removeContact = async (req, res, next) => {
 const updateContact = async (req, res, next) => {
   const { id } = req.params;
   const body = req.body;
+
+  if (Object.keys(body).length === 0) {
+    return res
+      .status(400)
+      .json({ message: "Body must have at least one field" });
+  }
+
   const updatedContact = await Contact.findByIdAndUpdate(id, body, {
     new: true,
   });

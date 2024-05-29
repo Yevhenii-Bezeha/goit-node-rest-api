@@ -21,7 +21,7 @@ router.delete("/:id", isValidMongoId, contactsControllers.removeContact);
 router.put(
   "/:id",
   isValidMongoId,
-  validateBody(contactsSchema.createContactsSchema),
+  validateBody(contactsSchema.updateContactSchema),
   contactsControllers.updateContact
 );
 router.patch(
