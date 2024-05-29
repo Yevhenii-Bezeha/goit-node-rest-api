@@ -3,7 +3,7 @@ const express = require("express");
 const authController = require("../../controllers/auth");
 const { validateBody } = require("../../decorators");
 const { usersSchemas } = require("../../validators");
-const { authorization } = require("../../middlewares");
+const { authorization, upload } = require("../../middlewares");
 
 const router = express.Router();
 
@@ -20,5 +20,12 @@ router.post(
 
 router.get("/current", authorization, authController.current);
 router.get("/logout", authorization, authController.logout);
+
+router.patch(
+  "/users/avatars",
+  upload.single("avatar"),
+  authorization,
+  authController.updateAvatar
+);
 
 module.exports = router;
