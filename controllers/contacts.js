@@ -5,7 +5,8 @@ const { ctrlWrapper } = require("../decorators");
 const Contact = require("../models/contact");
 
 const listContacts = async (req, res, next) => {
-  const data = await Contact.find();
+  const { id: owner } = req.user;
+  const data = await Contact.find({ owner });
   res.json(data);
 };
 
