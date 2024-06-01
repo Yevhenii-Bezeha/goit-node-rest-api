@@ -1,7 +1,7 @@
 const Joi = require("joi");
 
 const registerUser = Joi.object({
-  name: Joi.string().required(),
+  name: Joi.string(),
   email: Joi.string()
     .pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
     .required(),

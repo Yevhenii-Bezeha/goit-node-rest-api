@@ -13,7 +13,7 @@ const register = async (req, res) => {
   const isExist = await User.findOne({ email });
 
   if (isExist) {
-    throw httpError(409, `User with email ${email} already exists`);
+    throw httpError(409, "Email in use");
   }
 
   const avatarUrl = gravatar.url(email);
@@ -25,7 +25,7 @@ const register = async (req, res) => {
     password: hashedPassword,
     avatarUrl,
   });
-  res.status(201).json({ userEmail, name });
+  res.status(201).json({ user: { email: userEmail, subscription } });
 };
 
 const login = async (req, res) => {
@@ -67,7 +67,7 @@ const logout = async (req, res) => {
 
   await User.findByIdAndUpdate(id, { token: null });
 
-  res.json({ message: "Logout successful" });
+  res.status(204).json("No Content");
 };
 
 const updateAvatar = async (req, res) => {
