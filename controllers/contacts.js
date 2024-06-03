@@ -1,5 +1,3 @@
-// const contactsFunctions = require("../models/contacts");
-
 const { httpError } = require("../helpers");
 const { ctrlWrapper } = require("../decorators");
 const Contact = require("../models/contact");
@@ -7,13 +5,13 @@ const Contact = require("../models/contact");
 const listContacts = async (req, res, next) => {
   const { id: owner } = req.user;
   const data = await Contact.find({ owner });
-
   res.json(data);
 };
 
 const getContactById = async (req, res, next) => {
   const { id } = req.params;
-  const contact = await Contact.findById(id);
+  const { id: owner } = req.user;
+  const contact = await Contact.findOne({ _id: id, owner });
   if (!contact) {
     throw httpError(404, `Contact with ID ${id} not found`);
   }
@@ -31,7 +29,8 @@ const addContact = async (req, res, next) => {
 
 const removeContact = async (req, res, next) => {
   const { id } = req.params;
-  const deletedContact = await Contact.findByIdAndDelete(id);
+  const { id: owner } = req.user;
+  const deletedContact = await Contact.findOneAndDelete({ _id: id, owner });
   if (!deletedContact) {
     throw httpError(404, `Contact with ID ${id} not found`);
   }
@@ -40,6 +39,7 @@ const removeContact = async (req, res, next) => {
 
 const updateContact = async (req, res, next) => {
   const { id } = req.params;
+  const { id: owner } = req.user;
   const body = req.body;
 
   if (Object.keys(body).length === 0) {
@@ -48,9 +48,13 @@ const updateContact = async (req, res, next) => {
       .json({ message: "Body must have at least one field" });
   }
 
-  const updatedContact = await Contact.findByIdAndUpdate(id, body, {
-    new: true,
-  });
+  const updatedContact = await Contact.findOneAndUpdate(
+    { _id: id, owner },
+    body,
+    {
+      new: true,
+    }
+  );
   if (!updatedContact) {
     throw httpError(404, `Contact with ID ${id} not found`);
   }
@@ -59,10 +63,15 @@ const updateContact = async (req, res, next) => {
 
 const updateFavorite = async (req, res, next) => {
   const { id } = req.params;
+  const { id: owner } = req.user;
   const body = req.body;
-  const updatedContact = await Contact.findByIdAndUpdate(id, body, {
-    new: true,
-  });
+  const updatedContact = await Contact.findOneAndUpdate(
+    { _id: id, owner },
+    body,
+    {
+      new: true,
+    }
+  );
   if (!updatedContact) {
     throw httpError(404, `Contact with ID ${id} not found`);
   }

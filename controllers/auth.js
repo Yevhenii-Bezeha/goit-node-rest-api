@@ -20,7 +20,7 @@ const register = async (req, res) => {
 
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-  const { email: userEmail, name } = await User.create({
+  const { email: userEmail, subscription } = await User.create({
     ...req.body,
     password: hashedPassword,
     avatarUrl,
@@ -36,7 +36,7 @@ const login = async (req, res) => {
     throw httpError(401, `Email or password is wrong`);
   }
 
-  const isPasswordSame = bcrypt.compare(password, isExist.password);
+  const isPasswordSame = await bcrypt.compare(password, isExist.password);
   if (!isPasswordSame) {
     throw httpError(401, "Email or password is wrong");
   }
@@ -50,16 +50,16 @@ const login = async (req, res) => {
   res.json({
     user: {
       email: isExist.email,
-      name: isExist.name,
+      subscription: isExist.subscription,
     },
     token,
   });
 };
 
 const current = async (req, res) => {
-  const { email, name } = req.user;
+  const { email, subscription } = req.user;
 
-  res.json({ email, name });
+  res.json({ email, subscription });
 };
 
 const logout = async (req, res) => {
