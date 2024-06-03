@@ -20,6 +20,12 @@ router.post(
 
 router.get("/current", authorization, authController.current);
 router.post("/logout", authorization, authController.logout);
+router.post(
+  "/verify",
+  validateBody(usersSchemas.loginUser),
+  authController.resend
+);
+router.get("/verify/:verificationToken", authController.verify);
 
 router.patch(
   "/avatars",
