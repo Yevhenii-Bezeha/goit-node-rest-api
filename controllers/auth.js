@@ -7,6 +7,7 @@ const jsonwebtoken = require("jsonwebtoken");
 const gravatar = require("gravatar");
 const path = require("path");
 const jimp = require("jimp");
+const fs = require("fs");
 
 const register = async (req, res) => {
   const { email } = req.body;
@@ -72,20 +73,35 @@ const logout = async (req, res) => {
 
 const updateAvatar = async (req, res) => {
   const { _id } = req.user;
+
+  if (!req.file) {
+    throw httpError(401, "Not authorized");
+  }
+
   const oldPath = req.file.path;
-  const newPath = path.resolve("public/avatars", req.file.originalname);
+  const uniqueAvatarName = _id + "-" + req.file.originalname;
+  const newPath = path.resolve("public/avatars", uniqueAvatarName);
 
   await jimp
     .read(oldPath)
     .then((image) => {
       return image.resize(250, 250).write(newPath);
     })
+    .then(() => {
+      fs.unlink(oldPath, (err) => {
+        if (err) {
+          console.error("Error deleting file:", err.message);
+          throw new Error("Error deleting file");
+        }
+      });
+    })
     .catch((err) => {
-      console.error("Error resizing avatar:", err.message);
-      throw new Error("Error resizing avatar");
+      console.error("Error processing file:", err.message);
+      throw new Error("Error processing file");
     });
 
-  const avatarUrl = req.file.originalname;
+  const avatarUrl = "/avatars/" + uniqueAvatarName;
+
   await User.findByIdAndUpdate(_id, { avatarUrl }, { new: true });
 
   res.json({
